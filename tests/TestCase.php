@@ -6,13 +6,21 @@ namespace Yokuru\DbDescriptorTests;
 abstract class TestCase extends \PHPUnit\Framework\TestCase
 {
 
-    protected function getConnection(): \PDO
+    protected static function getConnection(): \PDO
     {
-        return new \PDO(
-            sprintf(getenv('DB_DSN'),getenv('DB_NAME')),
+        $pdo = new \PDO(
+            sprintf(getenv('DB_DSN'), self::getDbName()),
             getenv('DB_USER'),
             getenv('DB_PASSWORD')
         );
+        $pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+        return $pdo;
+    }
+
+    protected static function getDbName(): string
+    {
+        return getenv('DB_NAME');
     }
 
 }

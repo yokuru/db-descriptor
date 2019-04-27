@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Yokuru\DbDescriptor;
 
+
 abstract class Descriptor
 {
-
     /**
      * @var \PDO
      */
@@ -23,15 +23,15 @@ abstract class Descriptor
 
     /**
      * @param string $tableName
-     * @return Table
+     * @return Table[]
      */
-    abstract function describeTable(string $tableName): Table;
+    abstract function describeTables(string $tableName): array;
 
     /**
      * @param string $tableName
      * @param string $columnName
-     * @return Column
+     * @return Column[]
      */
-    abstract function describeColumn(string $tableName, string $columnName): Column;
+    abstract function describeColumns(string $tableName, string $columnName): array;
 
 }

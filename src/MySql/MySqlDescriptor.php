@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Yokuru\DbDescriptor\MySql;
 
+
 use Yokuru\DbDescriptor\Column;
 use Yokuru\DbDescriptor\Database;
 use Yokuru\DbDescriptor\Descriptor;
@@ -13,22 +14,52 @@ class MySqlDescriptor extends Descriptor
 
     public function describeDatabase(): Database
     {
-        $name = $this->conn->query('SELECT database() AS name')->fetchObject()->name;
-        return new MySqlDatabase($name);
+        $dbName = $this->conn->query('SELECT database() AS name')->fetchObject()->name;
+        return new MySqlDatabase($dbName, $this->describeTables($dbName));
     }
 
-    public function describeTable(string $tableName): Table
+    /**
+     * @param string $dbName
+     * @return Table[]
+     */
+    public function describeTables(string $dbName): array
     {
-        // TODO: Implement describeTable() method.
-        $this->conn->query('SELECT * FROM information.schema WHERE TABLE_SCHEMA = :db', [
-            'db' => $tableName,
+        $stmt = $this->conn->prepare('SELECT * FROM information_schema.TABLES WHERE TABLE_SCHEMA = :db');
+        $stmt->execute([
+            'db' => $dbName,
         ]);
+        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
+        $tables = [];
+        foreach ($rows as $row) {
+            $tableName = $row['TABLE_NAME'];
+            $tables[$tableName] = new MySqlTable($tableName, $this->describeColumns($dbName, $tableName), $row);
+        }
+
+        return $tables;
     }
 
-    public function describeColumn(string $tableName, string $columnName): Column
+    /**
+     * @param string $dbName
+     * @param string $tableName
+     * @return Column[]
+     */
+    public function describeColumns(string $dbName, string $tableName): array
     {
-        // TODO: Implement describeColumn() method.
+        $stmt = $this->conn->prepare('SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = :db AND TABLE_NAME = :table');
+        $stmt->execute([
+            'db' => $dbName,
+            'table' => $tableName,
+        ]);
+        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $columns = [];
+        foreach ($rows as $row) {
+            $columnName = $row['COLUMN_NAME'];
+            $columns[$columnName] = new MySqlColumn($columnName, $row);
+        }
+
+        return $columns;
     }
 
 }
