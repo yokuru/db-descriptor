@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Yokuru\DbDescriptor;
 
-
 abstract class Database
 {
     /**
@@ -16,6 +15,10 @@ abstract class Database
      */
     private $tables = [];
 
+    /**
+     * @param string $name
+     * @param array $tables
+     */
     public function __construct(string $name, array $tables)
     {
         $this->name = $name;

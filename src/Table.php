@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Yokuru\DbDescriptor;
 
-
 abstract class Table
 {
     /**
@@ -21,6 +20,11 @@ abstract class Table
      */
     protected $options = [];
 
+    /**
+     * @param string $name
+     * @param array $columns
+     * @param array $options
+     */
     public function __construct(string $name, array $columns, array $options = [])
     {
         $this->name = $name;

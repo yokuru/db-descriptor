@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Yokuru\DbDescriptor\MySql;
 
-
 use Yokuru\DbDescriptor\Column;
 use Yokuru\DbDescriptor\Database;
 use Yokuru\DbDescriptor\Descriptor;
@@ -12,6 +11,9 @@ use Yokuru\DbDescriptor\Table;
 class MySqlDescriptor extends Descriptor
 {
 
+    /**
+     * @return Database
+     */
     public function describeDatabase(): Database
     {
         $dbName = $this->conn->query('SELECT database() AS name')->fetchObject()->name;

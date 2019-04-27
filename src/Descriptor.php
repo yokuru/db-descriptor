@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Yokuru\DbDescriptor;
 
-
 abstract class Descriptor
 {
     /**
@@ -11,6 +10,9 @@ abstract class Descriptor
      */
     protected $conn;
 
+    /**
+     * @param \PDO $conn
+     */
     public function __construct(\PDO $conn)
     {
         $this->conn = $conn;

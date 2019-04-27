@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Yokuru\DbDescriptor\MySql;
 
-
 use Yokuru\DbDescriptorTests\TestCase;
 
 class MySqlTableTest extends TestCase

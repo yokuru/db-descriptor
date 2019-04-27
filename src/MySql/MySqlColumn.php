@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Yokuru\DbDescriptor\MySql;
 
-
 use Yokuru\DbDescriptor\Column;
 
 /**
@@ -12,6 +11,10 @@ use Yokuru\DbDescriptor\Column;
 class MySqlColumn extends Column
 {
 
+    /**
+     * @param string $name
+     * @param array $options
+     */
     public function __construct(string $name, array $options = [])
     {
         parent::__construct($name, $options);
