@@ -81,5 +81,23 @@ class MySqlColumnTest extends TestCase
         $this->assertEquals('', $column->generationExpression());
     }
 
+    public function testParseEnumValues()
+    {
+        $columnType = "enum('T1','T2','T3')";
+        $this->assertSame([
+            'T1',
+            'T2',
+            'T3',
+        ], MySqlColumn::parseEnumValues($columnType));
+
+        $columnType = "enum('AAA','B''BB','C\"CC','''D,DD','\"E,EE')";
+        $this->assertSame([
+            'AAA',
+            "B'BB",
+            'C"CC',
+            "'D,DD",
+            '"E,EE',
+        ], MySqlColumn::parseEnumValues($columnType));
+    }
 
 }

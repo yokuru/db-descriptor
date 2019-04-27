@@ -32,6 +32,13 @@ abstract class Column
     protected $notNull = false;
 
     /**
+     * For enum columns, values of enum
+     *
+     * @var string[]
+     */
+    protected $enumValues = [];
+
+    /**
      * @param string $name
      * @param array $options
      */
@@ -63,5 +70,15 @@ abstract class Column
     function isNotNull(): bool
     {
         return $this->notNull;
+    }
+
+    /**
+     *
+     *
+     * @return array
+     */
+    function getEnumValues(): array
+    {
+        return $this->enumValues;
     }
 }
