@@ -1,6 +1,6 @@
 {
     "name": "yokuru/db-descriptor",
-    "description": "Database schema descriptor.",
+    "description": "A simple database schema descriptor.",
     "type": "library",
     "license": "MIT",
     "authors": [

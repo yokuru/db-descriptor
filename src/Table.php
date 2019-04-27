@@ -9,21 +9,24 @@ abstract class Table
     /**
      * @var string
      */
-    private $name;
+    protected $name;
 
     /**
      * @var Column[]
      */
-    private $columns = [];
+    protected $columns = [];
+
+    /**
+     * @var array
+     */
+    protected $options = [];
 
     public function __construct(string $name, array $columns, array $options = [])
     {
         $this->name = $name;
         $this->columns = $columns;
-        $this->setOptions($options);
+        $this->options = $options;
     }
-
-    abstract protected function setOptions(array $options);
 
     /**
      * @return string
@@ -39,6 +42,14 @@ abstract class Table
     public function getColumns(): array
     {
         return $this->columns;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOptions(): array
+    {
+        return $this->options;
     }
 
     /**
