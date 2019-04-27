@@ -8,12 +8,23 @@ use Yokuru\DbDescriptor\Column;
 
 class MySqlColumn extends Column
 {
+
+    public function __construct(string $name, array $options = [])
+    {
+        parent::__construct($name, $options);
+
+        $this->autoIncrement = strpos($this->extra(), 'auto_increment') !== false;
+        $this->unsigned = strpos($this->columnType(), 'unsigned') !== false;
+        $this->notNull = $this->isNullable() === 'NO';
+    }
+
+
     /**
      * @return string
      */
     public function tableCatalog(): string
     {
-        return $this->options['TABLE_CATALOG'];
+        return $this->options['TABLE_CATALOG'] ?? '';
     }
 
     /**
@@ -21,7 +32,7 @@ class MySqlColumn extends Column
      */
     public function tableSchema(): string
     {
-        return $this->options['TABLE_SCHEMA'];
+        return $this->options['TABLE_SCHEMA'] ?? '';
     }
 
     /**
@@ -29,7 +40,7 @@ class MySqlColumn extends Column
      */
     public function tableName(): string
     {
-        return $this->options['TABLE_NAME'];
+        return $this->options['TABLE_NAME'] ?? '';
     }
 
     /**
@@ -37,7 +48,7 @@ class MySqlColumn extends Column
      */
     public function columnName(): string
     {
-        return $this->options['COLUMN_NAME'];
+        return $this->options['COLUMN_NAME'] ?? '';
     }
 
     /**
@@ -45,7 +56,7 @@ class MySqlColumn extends Column
      */
     public function ordinalPosition(): int
     {
-        return $this->options['ORDINAL_POSITION'];
+        return $this->options['ORDINAL_POSITION'] ?? 0;
     }
 
     /**
@@ -61,7 +72,7 @@ class MySqlColumn extends Column
      */
     public function isNullable(): string
     {
-        return $this->options["IS_NULLABLE"];
+        return $this->options["IS_NULLABLE"] ?? '';
     }
 
     /**
@@ -69,7 +80,7 @@ class MySqlColumn extends Column
      */
     public function dataType(): string
     {
-        return $this->options['DATA_TYPE'];
+        return $this->options['DATA_TYPE'] ?? '';
     }
 
     /**
@@ -133,7 +144,7 @@ class MySqlColumn extends Column
      */
     public function columnType(): string
     {
-        return $this->options['COLUMN_TYPE'];
+        return $this->options['COLUMN_TYPE'] ?? '';
     }
 
     /**
@@ -141,7 +152,7 @@ class MySqlColumn extends Column
      */
     public function columnKey(): string
     {
-        return $this->options['COLUMN_KEY'];
+        return $this->options['COLUMN_KEY'] ?? '';
     }
 
     /**
@@ -149,7 +160,7 @@ class MySqlColumn extends Column
      */
     public function extra(): string
     {
-        return $this->options['EXTRA'];
+        return $this->options['EXTRA'] ?? '';
     }
 
     /**
@@ -157,7 +168,7 @@ class MySqlColumn extends Column
      */
     public function privileges(): string
     {
-        return $this->options['PRIVILEGES'];
+        return $this->options['PRIVILEGES'] ?? '';
     }
 
     /**
@@ -165,7 +176,7 @@ class MySqlColumn extends Column
      */
     public function columnComment(): string
     {
-        return $this->options['COLUMN_COMMENT'];
+        return $this->options['COLUMN_COMMENT'] ?? '';
     }
 
     /**
@@ -173,6 +184,6 @@ class MySqlColumn extends Column
      */
     public function generationExpression(): string
     {
-        return $this->options['GENERATION_EXPRESSION'];
+        return $this->options['GENERATION_EXPRESSION'] ?? "";
     }
 }

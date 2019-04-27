@@ -8,15 +8,30 @@ use Yokuru\DbDescriptorTests\TestCase;
 
 class MySqlColumnTest extends TestCase
 {
-    /**
-     * @var MySqlColumn
-     */
-    private $target;
 
-    protected function setUp()
+    public function testConstructor()
     {
-        parent::setUp();
+        $column = new MySqlColumn('col1', [
+            'EXTRA' => 'auto_increment',
+            'COLUMN_TYPE' => 'int(10) unsigned',
+            'IS_NULLABLE' => 'NO',
+        ]);
+        $this->assertTrue($column->isAutoIncrement());
+        $this->assertTrue($column->isUnsigned());
+        $this->assertTrue($column->isNotNull());
 
+        $column = new MySqlColumn('col2', [
+            'EXTRA' => '',
+            'COLUMN_TYPE' => 'int(10)',
+            'IS_NULLABLE' => 'YES',
+        ]);
+        $this->assertFalse($column->isAutoIncrement());
+        $this->assertFalse($column->isUnsigned());
+        $this->assertFalse($column->isNotNull());
+    }
+
+    public function testGetters()
+    {
         $options = [
             'TABLE_CATALOG' => 'def',
             'TABLE_SCHEMA' => 'db',
@@ -41,32 +56,29 @@ class MySqlColumnTest extends TestCase
             'GENERATION_EXPRESSION' => '',
         ];
 
-        $this->target = new MySqlColumn('col1', $options);
-    }
+        $column = new MySqlColumn('col1', $options);
 
-    public function testGetters()
-    {
-        $this->assertEquals('def', $this->target->tableCatalog());
-        $this->assertEquals('db', $this->target->tableSchema());
-        $this->assertEquals('table1', $this->target->tableName());
-        $this->assertEquals('col1', $this->target->columnName());
-        $this->assertEquals(1, $this->target->ordinalPosition());
-        $this->assertEquals(null, $this->target->columnDefault());
-        $this->assertEquals('NO', $this->target->isNullable());
-        $this->assertEquals('int', $this->target->dataType());
-        $this->assertEquals(null, $this->target->characterMaximumLength());
-        $this->assertEquals(null, $this->target->characterOctetLength());
-        $this->assertEquals(10, $this->target->numericPrecision());
-        $this->assertEquals(0, $this->target->numericScale());
-        $this->assertEquals(null, $this->target->datetimePrecision());
-        $this->assertEquals(null, $this->target->characterSetName());
-        $this->assertEquals(null, $this->target->collationName());
-        $this->assertEquals('int(10) unsigned', $this->target->columnType());
-        $this->assertEquals('PRI', $this->target->columnKey());
-        $this->assertEquals('auto_increment', $this->target->extra());
-        $this->assertEquals('select,insert,update,references', $this->target->privileges());
-        $this->assertEquals('ID', $this->target->columnComment());
-        $this->assertEquals('', $this->target->generationExpression());
+        $this->assertEquals('def', $column->tableCatalog());
+        $this->assertEquals('db', $column->tableSchema());
+        $this->assertEquals('table1', $column->tableName());
+        $this->assertEquals('col1', $column->columnName());
+        $this->assertEquals(1, $column->ordinalPosition());
+        $this->assertEquals(null, $column->columnDefault());
+        $this->assertEquals('NO', $column->isNullable());
+        $this->assertEquals('int', $column->dataType());
+        $this->assertEquals(null, $column->characterMaximumLength());
+        $this->assertEquals(null, $column->characterOctetLength());
+        $this->assertEquals(10, $column->numericPrecision());
+        $this->assertEquals(0, $column->numericScale());
+        $this->assertEquals(null, $column->datetimePrecision());
+        $this->assertEquals(null, $column->characterSetName());
+        $this->assertEquals(null, $column->collationName());
+        $this->assertEquals('int(10) unsigned', $column->columnType());
+        $this->assertEquals('PRI', $column->columnKey());
+        $this->assertEquals('auto_increment', $column->extra());
+        $this->assertEquals('select,insert,update,references', $column->privileges());
+        $this->assertEquals('ID', $column->columnComment());
+        $this->assertEquals('', $column->generationExpression());
     }
 
 

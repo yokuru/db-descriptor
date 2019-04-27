@@ -144,6 +144,6 @@ class MySqlTable extends Table
      */
     public function tableComment(): string
     {
-        return $this->options['TABLE_COMMENT'];
+        return $this->options['TABLE_COMMENT'] ?? '';
     }
 }
