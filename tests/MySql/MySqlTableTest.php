@@ -21,6 +21,11 @@ class MySqlTableTest extends TestCase
             new MySqlColumn('col2', []),
         ];
 
+        $indexes = [
+            new MySqlIndex('PRIMARY', ['col1']),
+            new MySqlIndex('index1', ['col2', 'col1']),
+        ];
+
         $options = [
             'TABLE_CATALOG' => 'def',
             'TABLE_SCHEMA' => 'db',
@@ -45,7 +50,7 @@ class MySqlTableTest extends TestCase
             'TABLE_COMMENT' => 'Table One',
         ];
 
-        $this->target = new MySqlTable('testdb', $columns, $options);
+        $this->target = new MySqlTable('testdb', $columns, $indexes, $options);
     }
 
     public function testGetters()
@@ -68,6 +73,4 @@ class MySqlTableTest extends TestCase
         $this->assertEquals('', $this->target->createOptions());
         $this->assertEquals('Table One', $this->target->tableComment());
     }
-
-
 }

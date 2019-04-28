@@ -16,19 +16,26 @@ abstract class Table
     protected $columns = [];
 
     /**
+     * @var Index[]
+     */
+    protected $indexes = [];
+
+    /**
      * @var array
      */
     protected $options = [];
 
     /**
      * @param string $name
-     * @param array $columns
+     * @param Column[] $columns
+     * @param Index[] $indexes
      * @param array $options
      */
-    public function __construct(string $name, array $columns, array $options = [])
+    public function __construct(string $name, array $columns, array $indexes, array $options = [])
     {
         $this->name = $name;
         $this->columns = $columns;
+        $this->indexes = $indexes;
         $this->options = $options;
     }
 
@@ -46,6 +53,14 @@ abstract class Table
     public function getColumns(): array
     {
         return $this->columns;
+    }
+
+    /**
+     * @return Index[]
+     */
+    public function getIndexes(): array
+    {
+        return $this->indexes;
     }
 
     /**

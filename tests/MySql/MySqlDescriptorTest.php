@@ -18,7 +18,8 @@ class MySqlDescriptorTest extends TestCase
 
         // create tables
         $pdo = self::getConnection();
-        $pdo->exec('CREATE TABLE table1(id int, name varchar(100), created_at datetime)');
+        $pdo->exec('CREATE TABLE table1(id int primary key, name varchar(100), created_at datetime)');
+        $pdo->exec('CREATE INDEX index1 on table1 (name, id);');
         $pdo->exec('CREATE TABLE table2(id int)');
     }
 
@@ -53,6 +54,23 @@ class MySqlDescriptorTest extends TestCase
         $this->assertTrue(isset($tables['table2']));
         $this->assertEquals(3, count($tables['table1']->getColumns()));
         $this->assertEquals(1, count($tables['table2']->getColumns()));
+    }
+
+    public function testDescribeIndexes()
+    {
+        $indexes = $this->target->describeIndexes(self::getDbName(), 'table1');
+        $this->assertEquals(2, count($indexes));
+
+        $index = $indexes['PRIMARY'];
+        $this->assertEquals('PRIMARY', $index->getName());
+        $this->assertEquals(1, count($index->getColumns()));
+        $this->assertEquals('id', $index->getColumns()[0]);
+
+        $index = $indexes['index1'];
+        $this->assertEquals('index1', $index->getName());
+        $this->assertEquals(2, count($index->getColumns()));
+        $this->assertEquals('name', $index->getColumns()[0]);
+        $this->assertEquals('id', $index->getColumns()[1]);
     }
 
     public function testDescribeColumns()

@@ -32,7 +32,6 @@ abstract class Column
 
     /**
      * For enum columns, values of enum
-     *
      * @var string[]
      */
     protected $enumValues = [];
@@ -50,7 +49,7 @@ abstract class Column
     /**
      * @return bool
      */
-    function isAutoIncrement(): bool
+    public function isAutoIncrement(): bool
     {
         return $this->autoIncrement;
     }
@@ -58,7 +57,7 @@ abstract class Column
     /**
      * @return bool
      */
-    function isUnsigned(): bool
+    public function isUnsigned(): bool
     {
         return $this->unsigned;
     }
@@ -66,17 +65,15 @@ abstract class Column
     /**
      * @return bool
      */
-    function isNotNull(): bool
+    public function isNotNull(): bool
     {
         return $this->notNull;
     }
 
     /**
-     *
-     *
      * @return array
      */
-    function getEnumValues(): array
+    public function getEnumValues(): array
     {
         return $this->enumValues;
     }

@@ -6,6 +6,7 @@ namespace Yokuru\DbDescriptor\MySql;
 use Yokuru\DbDescriptor\Column;
 use Yokuru\DbDescriptor\Database;
 use Yokuru\DbDescriptor\Descriptor;
+use Yokuru\DbDescriptor\Index;
 use Yokuru\DbDescriptor\Table;
 
 class MySqlDescriptor extends Descriptor
@@ -26,7 +27,14 @@ class MySqlDescriptor extends Descriptor
      */
     public function describeTables(string $dbName): array
     {
-        $stmt = $this->conn->prepare('SELECT * FROM information_schema.TABLES WHERE TABLE_SCHEMA = :db');
+        $stmt = $this->conn->prepare('
+          SELECT
+            *
+          FROM
+            information_schema.TABLES
+          WHERE
+            TABLE_SCHEMA = :db
+        ');
         $stmt->execute([
             'db' => $dbName,
         ]);
@@ -35,10 +43,56 @@ class MySqlDescriptor extends Descriptor
         $tables = [];
         foreach ($rows as $row) {
             $tableName = $row['TABLE_NAME'];
-            $tables[$tableName] = new MySqlTable($tableName, $this->describeColumns($dbName, $tableName), $row);
+            $tables[$tableName] = new MySqlTable(
+                $tableName,
+                $this->describeColumns($dbName, $tableName),
+                $this->describeIndexes($dbName, $tableName),
+                $row
+            );
         }
 
         return $tables;
+    }
+
+    /**
+     * @param string $dbName
+     * @param string $tableName
+     * @return Index[]
+     */
+    public function describeIndexes(string $dbName, string $tableName): array
+    {
+        $stmt = $this->conn->prepare('
+          SELECT
+            *
+          FROM
+            information_schema.STATISTICS
+          WHERE
+            TABLE_SCHEMA = :db
+            AND TABLE_NAME = :table
+          ORDER BY
+            INDEX_NAME,
+            SEQ_IN_INDEX
+        ');
+        $stmt->execute([
+            'db' => $dbName,
+            'table' => $tableName,
+        ]);
+        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $indexColumns = [];
+        foreach ($rows as $row) {
+            $indexColumns[$row['INDEX_NAME']][] = $row['COLUMN_NAME'];
+        }
+
+        $indexes = [];
+        foreach ($rows as $row) {
+            $indexName = $row['INDEX_NAME'];
+            if (!isset($indexes[$indexName])) {
+                $indexes[$indexName] = new MySqlIndex($indexName, $indexColumns[$indexName]);
+            }
+        }
+
+        return $indexes;
     }
 
     /**
@@ -48,7 +102,15 @@ class MySqlDescriptor extends Descriptor
      */
     public function describeColumns(string $dbName, string $tableName): array
     {
-        $stmt = $this->conn->prepare('SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = :db AND TABLE_NAME = :table');
+        $stmt = $this->conn->prepare('
+          SELECT 
+            *
+          FROM
+            information_schema.COLUMNS
+          WHERE
+            TABLE_SCHEMA = :db
+            AND TABLE_NAME = :table
+        ');
         $stmt->execute([
             'db' => $dbName,
             'table' => $tableName,
@@ -63,5 +125,4 @@ class MySqlDescriptor extends Descriptor
 
         return $columns;
     }
-
 }
