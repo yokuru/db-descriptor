@@ -54,6 +54,9 @@ class MySqlDescriptorTest extends TestCase
         $this->assertTrue(isset($tables['table2']));
         $this->assertEquals(3, count($tables['table1']->getColumns()));
         $this->assertEquals(1, count($tables['table2']->getColumns()));
+
+        $this->assertEquals(1, count($tables['table1']->getPrimaryKeys()));
+        $this->assertEquals('id', $tables['table1']->getPrimaryKeys()[0]);
     }
 
     public function testDescribeIndexes()

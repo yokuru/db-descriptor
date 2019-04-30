@@ -21,6 +21,12 @@ abstract class Table
     protected $indexes = [];
 
     /**
+     * Column name of primary keys
+     * @var string[]
+     */
+    protected $primaryKeys = [];
+
+    /**
      * @var array
      */
     protected $options = [];
@@ -64,6 +70,14 @@ abstract class Table
     }
 
     /**
+     * @return string[]
+     */
+    public function getPrimaryKeys(): array
+    {
+        return $this->primaryKeys;
+    }
+
+    /**
      * @return array
      */
     public function getOptions(): array
@@ -82,5 +96,13 @@ abstract class Table
         }
 
         return $this->columns[$name];
+    }
+
+    /**
+     * @param array $primaryKeys
+     */
+    public function setPrimaryKeys(array $primaryKeys)
+    {
+        $this->primaryKeys = $primaryKeys;
     }
 }

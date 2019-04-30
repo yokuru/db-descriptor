@@ -11,6 +11,7 @@ use Yokuru\DbDescriptor\Table;
 
 class MySqlDescriptor extends Descriptor
 {
+    const INDEX_NAME_PK = 'PRIMARY';
 
     /**
      * @return Database
@@ -43,12 +44,20 @@ class MySqlDescriptor extends Descriptor
         $tables = [];
         foreach ($rows as $row) {
             $tableName = $row['TABLE_NAME'];
-            $tables[$tableName] = new MySqlTable(
+            $indexes = $this->describeIndexes($dbName, $tableName);
+            $table = new MySqlTable(
                 $tableName,
                 $this->describeColumns($dbName, $tableName),
-                $this->describeIndexes($dbName, $tableName),
+                $indexes,
                 $row
             );
+
+            // set primary keys
+            if (isset($indexes[self::INDEX_NAME_PK])) {
+                $table->setPrimaryKeys($indexes[self::INDEX_NAME_PK]->getColumns());
+            }
+
+            $tables[$tableName] = $table;
         }
 
         return $tables;
