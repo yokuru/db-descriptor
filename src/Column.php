@@ -37,6 +37,12 @@ abstract class Column
     protected $enumValues = [];
 
     /**
+     * For foreign key
+     * @var ?Reference
+     */
+    protected $reference;
+
+    /**
      * @param string $name
      * @param array $options
      */
@@ -76,5 +82,29 @@ abstract class Column
     public function getEnumValues(): array
     {
         return $this->enumValues;
+    }
+
+    /**
+     * @return Reference
+     */
+    public function getReference(): Reference
+    {
+        return $this->reference;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasReference(): bool
+    {
+        return $this->reference !== null;
+    }
+
+    /**
+     * @param Reference $reference
+     */
+    public function setReference(Reference $reference)
+    {
+        $this->reference = $reference;
     }
 }

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Yokuru\DbDescriptor\MySql;
 
+use Yokuru\DbDescriptor\Constraint;
 use Yokuru\DbDescriptor\Table;
 
 /**
@@ -13,7 +14,23 @@ class MySqlTable extends Table
 
     public function getPrimaryKeys(): array
     {
-        return $this->constraints['PRIMARY'] ? $this->constraints['PRIMARY']->getColumns() : [];
+        foreach ($this->constraints as $c) {
+            if ($c->getType() === Constraint::TYPE_PRIMARY_KEY) {
+                return $c->getColumns();
+            }
+        }
+        return [];
+    }
+
+    public function getForeignKeys(): array
+    {
+        $foreignKeys = [];
+        foreach ($this->columns as $name => $c) {
+            if ($c->hasReference()) {
+                $foreignKeys[$name] = $c->getReference();
+            }
+        }
+        return $foreignKeys;
     }
 
     /**

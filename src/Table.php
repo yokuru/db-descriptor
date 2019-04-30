@@ -83,6 +83,12 @@ abstract class Table
     abstract public function getPrimaryKeys(): array;
 
     /**
+     * Get foreign keys
+     * @return Reference[]
+     */
+    abstract public function getForeignKeys(): array;
+
+    /**
      * @return array
      */
     public function getOptions(): array

@@ -13,19 +13,25 @@ abstract class Constraint
      * Constraint name
      * @var string
      */
-    private $name;
+    protected $name;
 
     /**
      * Column names
      * @var string[]
      */
-    private $columns = [];
+    protected $columns = [];
 
     /**
      * Constraint type
      * @var string
      */
-    private $type = [];
+    protected $type = [];
+
+    /**
+     * For foreign key, referenced column information
+     * @var Reference
+     */
+    protected $reference;
 
     public function __construct(string $name, array $columns, string $type)
     {
@@ -48,4 +54,16 @@ abstract class Constraint
     {
         return $this->type;
     }
+
+    public function getReference()
+    {
+        return $this->reference;
+    }
+
+    public function setReference(Reference $reference)
+    {
+        assert($this->type === self::TYPE_FOREIGN_KEY);
+        $this->reference = $reference;
+    }
+
 }

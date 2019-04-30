@@ -117,5 +117,9 @@ class MySqlDescriptorTest extends TestCase
         $this->assertEquals(2, count($columns));
         $this->assertTrue(isset($columns['id']));
         $this->assertTrue(isset($columns['table1_id']));
+
+        $ref = $columns['table1_id']->getReference();
+        $this->assertEquals('table1', $ref->getReferencedTable());
+        $this->assertEquals('id', $ref->getReferencedColumn());
     }
 }

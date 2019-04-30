@@ -98,9 +98,9 @@ class MySqlDescriptor extends Descriptor
                     break;
 
                 case 'FOREIGN KEY':
-                    $constraints[$name] = new MySqlConstraint($name, [$keyColumnUsages[$name]['COLUMN_NAME']], Constraint::TYPE_FOREIGN_KEY);
-
-                    // TODO set options for foreign key
+                    $foreignKey = new MySqlConstraint($name, [$keyColumnUsages[$name]['COLUMN_NAME']], Constraint::TYPE_FOREIGN_KEY);
+                    $foreignKey->setReference(new MySqlReference($keyColumnUsages[$name]['REFERENCED_TABLE_NAME'], $keyColumnUsages[$name]['REFERENCED_COLUMN_NAME']));
+                    $constraints[$name] = $foreignKey;
                     break;
 
                 case 'UNIQUE':
@@ -209,6 +209,13 @@ class MySqlDescriptor extends Descriptor
         foreach ($rows as $row) {
             $columnName = $row['COLUMN_NAME'];
             $columns[$columnName] = new MySqlColumn($columnName, $row);
+        }
+
+        // TODO duplicated processing
+        foreach ($this->describeConstraints($dbName, $tableName) as $c) {
+            if ($c->getType() === Constraint::TYPE_FOREIGN_KEY) {
+                $columns[$c->getColumns()[0]]->setReference($c->getReference());
+            }
         }
 
         return $columns;
