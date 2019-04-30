@@ -26,12 +26,6 @@ abstract class Table
     protected $constraints = [];
 
     /**
-     * Column name of primary keys
-     * @var string[]
-     */
-    protected $primaryKeys = [];
-
-    /**
      * @var array
      */
     protected $options = [];
@@ -83,12 +77,10 @@ abstract class Table
     }
 
     /**
+     * Get column names of primary key
      * @return string[]
      */
-    public function getPrimaryKeys(): array
-    {
-        return $this->primaryKeys;
-    }
+    abstract public function getPrimaryKeys(): array;
 
     /**
      * @return array
@@ -117,13 +109,5 @@ abstract class Table
     public function setConstraints(array $constraints)
     {
         $this->constraints = $constraints;
-    }
-
-    /**
-     * @param array $primaryKeys
-     */
-    public function setPrimaryKeys(array $primaryKeys)
-    {
-        $this->primaryKeys = $primaryKeys;
     }
 }

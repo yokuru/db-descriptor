@@ -10,6 +10,12 @@ use Yokuru\DbDescriptor\Table;
  */
 class MySqlTable extends Table
 {
+
+    public function getPrimaryKeys(): array
+    {
+        return $this->constraints['PRIMARY'] ? $this->constraints['PRIMARY']->getColumns() : [];
+    }
+
     /**
      * @return string|null
      */
