@@ -21,6 +21,11 @@ abstract class Table
     protected $indexes = [];
 
     /**
+     * @var Constraint[]
+     */
+    protected $constraints = [];
+
+    /**
      * Column name of primary keys
      * @var string[]
      */
@@ -70,6 +75,14 @@ abstract class Table
     }
 
     /**
+     * @return Constraint[]
+     */
+    public function getConstraints(): array
+    {
+        return $this->constraints;
+    }
+
+    /**
      * @return string[]
      */
     public function getPrimaryKeys(): array
@@ -96,6 +109,14 @@ abstract class Table
         }
 
         return $this->columns[$name];
+    }
+
+    /**
+     * @param Constraint[] $constraints
+     */
+    public function setConstraints(array $constraints)
+    {
+        $this->constraints = $constraints;
     }
 
     /**

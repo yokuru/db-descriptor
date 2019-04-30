@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Yokuru\DbDescriptor\MySql;
 
 use Yokuru\DbDescriptor\Column;
+use Yokuru\DbDescriptor\Constraint;
 use Yokuru\DbDescriptor\Database;
 use Yokuru\DbDescriptor\Descriptor;
 use Yokuru\DbDescriptor\Index;
@@ -52,6 +53,9 @@ class MySqlDescriptor extends Descriptor
                 $row
             );
 
+            // set constraints
+            $table->setConstraints($this->describeConstraints($dbName, $tableName));
+
             // set primary keys
             if (isset($indexes[self::INDEX_NAME_PK])) {
                 $table->setPrimaryKeys($indexes[self::INDEX_NAME_PK]->getColumns());
@@ -61,6 +65,88 @@ class MySqlDescriptor extends Descriptor
         }
 
         return $tables;
+    }
+
+    /**
+     * @param string $dbName
+     * @param string $tableName
+     * @return Constraint[]
+     */
+    public function describeConstraints(string $dbName, string $tableName): array
+    {
+        $stmt = $this->conn->prepare('
+          SELECT
+            *
+          FROM
+            information_schema.TABLE_CONSTRAINTS
+          WHERE
+            TABLE_SCHEMA = :db
+            AND TABLE_NAME = :table
+        ');
+        $stmt->execute([
+            'db' => $dbName,
+            'table' => $tableName,
+        ]);
+        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        // TODO duplicated processing
+        $indexes = $this->describeIndexes($dbName, $tableName);
+
+        // TODO unreadable
+        $keyColumnUsages = $this->describeKeyColumnUsages($dbName, $tableName);
+
+        $constraints = [];
+        foreach ($rows as $row) {
+            $name = $row['CONSTRAINT_NAME'];
+
+            switch ($row['CONSTRAINT_TYPE']) {
+                case 'PRIMARY KEY':
+                    $constraints[$name] = new MySqlConstraint($name, $indexes[$name]->getColumns(), Constraint::TYPE_PRIMARY_KEY);
+                    break;
+
+                case 'FOREIGN KEY':
+                    $constraints[$name] = new MySqlConstraint($name, [$keyColumnUsages[$name]['COLUMN_NAME']], Constraint::TYPE_FOREIGN_KEY);
+
+                    // TODO set options for foreign key
+                    break;
+
+                case 'UNIQUE':
+                    $constraints[$name] = new MySqlConstraint($name, $indexes[$name]->getColumns(), Constraint::TYPE_UNIQUE);
+                    break;
+
+                default:
+                    throw new \InvalidArgumentException("Unknown constraint type '{$row['CONSTRAINT_TYPE']}''");
+            }
+        }
+
+        return $constraints;
+    }
+
+    private function describeKeyColumnUsages($dbName, $tableName): array
+    {
+        $stmt = $this->conn->prepare('
+          SELECT
+            *
+          FROM
+            information_schema.KEY_COLUMN_USAGE
+          WHERE
+            TABLE_SCHEMA = :db
+            AND TABLE_NAME = :table
+        ');
+
+        $stmt->execute([
+            'db' => $dbName,
+            'table' => $tableName,
+        ]);
+
+        $rows = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+        $keyColumnUsages = [];
+        foreach ($rows as $row) {
+            $keyColumnUsages[$row['CONSTRAINT_NAME' ]] = $row;
+        }
+
+        return $keyColumnUsages;
     }
 
     /**

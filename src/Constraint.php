@@ -3,10 +3,14 @@ declare(strict_types=1);
 
 namespace Yokuru\DbDescriptor;
 
-abstract class Index
+abstract class Constraint
 {
+    const TYPE_PRIMARY_KEY = 'pk';
+    const TYPE_FOREIGN_KEY = 'fk';
+    const TYPE_UNIQUE = 'uq';
+
     /**
-     * Index name
+     * Constraint name
      * @var string
      */
     private $name;
@@ -15,31 +19,33 @@ abstract class Index
      * Column names
      * @var string[]
      */
-    private $columns;
+    private $columns = [];
 
     /**
-     * @param string $name
-     * @param string[] $columns
+     * Constraint type
+     * @var string
      */
-    public function __construct(string $name, array $columns)
+    private $type = [];
+
+    public function __construct(string $name, array $columns, string $type)
     {
         $this->name = $name;
         $this->columns = $columns;
+        $this->type = $type;
     }
 
-    /**
-     * @return string
-     */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * @return string[]
-     */
     public function getColumns(): array
     {
         return $this->columns;
+    }
+
+    public function getType(): string
+    {
+        return $this->type;
     }
 }
