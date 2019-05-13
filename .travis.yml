@@ -1,0 +1,24 @@
+language: php
+php:
+  - '7.1'
+  - '7.2'
+  - '7.3'
+
+services:
+  - mysql
+
+cache:
+  directories:
+    - $HOME/.composer/cache
+
+before_install:
+  - mysql -e 'CREATE DATABASE testdb;'
+
+install:
+  - travis_retry composer update --prefer-dist --no-interaction --prefer-stable --no-suggest
+
+script:
+  - vendor/bin/phpunit --configuration phpunit.travis.xml --coverage-clover build/logs/clover.xml
+
+after_success:
+  - travis_retry vendor/bin/php-coveralls -v

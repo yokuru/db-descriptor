@@ -3,7 +3,7 @@ Database Descriptor
 
 [![MIT License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](LICENSE)
 
-A simple database descriptor that supports only MySQL.
+A simple database schema descriptor that supports only MySQL.
 
 
 ## Installation
