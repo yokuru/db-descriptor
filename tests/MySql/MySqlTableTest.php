@@ -80,8 +80,28 @@ class MySqlTableTest extends TestCase
         $this->assertSame('target_column', $fk['col3']->getReferencedColumn());
     }
 
-    public function getComment()
+    public function testGetComment()
     {
         $this->assertEquals('Table One', $this->target->getComment());
+    }
+
+    public function testGetters()
+    {
+        $this->assertEquals('InnoDB', $this->target->engine());
+        $this->assertEquals(10, $this->target->version());
+        $this->assertEquals('Dynamic', $this->target->rowFormat());
+        $this->assertEquals(8, $this->target->tableRows());
+        $this->assertEquals(2048, $this->target->avgRowLength());
+        $this->assertEquals(16384, $this->target->dataLength());
+        $this->assertEquals(0, $this->target->maxDataLength());
+        $this->assertEquals(0, $this->target->indexLength());
+        $this->assertEquals(0, $this->target->dataFree());
+        $this->assertEquals(9, $this->target->autoIncrement());
+        $this->assertEquals('2019-04-24 21:29:54', $this->target->createTime());
+        $this->assertEquals('2019-04-25 08:12:33', $this->target->updateTime());
+        $this->assertEquals(null, $this->target->checkTime());
+        $this->assertEquals('utf8mb4_unicode_ci', $this->target->tableCollation());
+        $this->assertEquals(null, $this->target->checksum());
+        $this->assertEquals('', $this->target->createOptions());
     }
 }
