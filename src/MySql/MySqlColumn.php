@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Yokuru\DbDescriptor\MySql;
 
 use Yokuru\DbDescriptor\Column;
+use Yokuru\DbDescriptor\Reference;
 
 /**
  * @see https://dev.mysql.com/doc/refman/8.0/en/columns-table.html
@@ -19,10 +20,6 @@ class MySqlColumn extends Column
     {
         parent::__construct($name, $options);
 
-        $this->autoIncrement = strpos($this->extra(), 'auto_increment') !== false;
-        $this->unsigned = strpos($this->columnType(), 'unsigned') !== false;
-        $this->notNull = $this->isNullable() === 'NO';
-
         if ($this->dataType() === 'enum') {
             // Since columnType has single quote as escape sequence,
             // parse enum values manually.
@@ -30,6 +27,37 @@ class MySqlColumn extends Column
         }
     }
 
+    /**
+     * @return bool
+     */
+    public function isAutoIncrement(): bool
+    {
+        return strpos($this->extra(), 'auto_increment') !== false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUnsigned(): bool
+    {
+        return strpos($this->columnType(), 'unsigned') !== false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isNotNull(): bool
+    {
+        return $this->isNullable() === 'NO';
+    }
+
+    /**
+     * @param Reference $reference
+     */
+    public function setReference(Reference $reference)
+    {
+        $this->reference = $reference;
+    }
 
     /**
      * @return string

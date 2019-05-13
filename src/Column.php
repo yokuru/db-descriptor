@@ -11,36 +11,19 @@ abstract class Column
     protected $name;
 
     /**
-     * @var array
+     * @var ?Reference
      */
-    protected $options = [];
+    protected $reference;
 
     /**
-     * @var bool
-     */
-    protected $autoIncrement = false;
-
-    /**
-     * @var bool
-     */
-    protected $unsigned = false;
-
-    /**
-     * @var bool
-     */
-    protected $notNull = false;
-
-    /**
-     * For enum columns, values of enum
      * @var string[]
      */
     protected $enumValues = [];
 
     /**
-     * For foreign key
-     * @var ?Reference
+     * @var array
      */
-    protected $reference;
+    protected $options = [];
 
     /**
      * @param string $name
@@ -61,38 +44,7 @@ abstract class Column
     }
 
     /**
-     * @return bool
-     */
-    public function isAutoIncrement(): bool
-    {
-        return $this->autoIncrement;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isUnsigned(): bool
-    {
-        return $this->unsigned;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isNotNull(): bool
-    {
-        return $this->notNull;
-    }
-
-    /**
-     * @return array
-     */
-    public function getEnumValues(): array
-    {
-        return $this->enumValues;
-    }
-
-    /**
+     * For foreign key
      * @return Reference
      */
     public function getReference(): Reference
@@ -109,10 +61,43 @@ abstract class Column
     }
 
     /**
-     * @param Reference $reference
+     * For enum columns, values of enum
+     * @return array
      */
-    public function setReference(Reference $reference)
+    public function getEnumValues(): array
     {
-        $this->reference = $reference;
+        return $this->enumValues;
     }
+
+    /**
+     * @return array
+     */
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
+    /**
+     * @param string $key
+     * @return mixed|null
+     */
+    public function getOption(string $key)
+    {
+        return $this->options[$key] ?? null;
+    }
+
+    /**
+     * @return bool
+     */
+    abstract public function isAutoIncrement(): bool;
+
+    /**
+     * @return bool
+     */
+    abstract public function isUnsigned(): bool;
+
+    /**
+     * @return bool
+     */
+    abstract public function isNotNull(): bool;
 }
