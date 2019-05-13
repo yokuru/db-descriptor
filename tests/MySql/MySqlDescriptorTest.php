@@ -59,7 +59,7 @@ class MySqlDescriptorTest extends TestCase
         $this->assertEquals(2, count($tables['table2']->getColumns()));
 
         $this->assertEquals(1, count($tables['table1']->getPrimaryKeys()));
-        $this->assertEquals('id', $tables['table1']->getPrimaryKeys()[0]);
+        $this->assertEquals('id', $tables['table1']->getPrimaryKeys()[0]->getName());
     }
 
     public function testDescribeConstraints()

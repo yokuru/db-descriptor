@@ -53,6 +53,14 @@ abstract class Column
     }
 
     /**
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
      * @return bool
      */
     public function isAutoIncrement(): bool

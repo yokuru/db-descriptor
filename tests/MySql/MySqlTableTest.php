@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace Yokuru\DbDescriptor\MySql;
 
+use Yokuru\DbDescriptor\Constraint;
 use Yokuru\DbDescriptorTests\TestCase;
 
 class MySqlTableTest extends TestCase
@@ -16,13 +17,17 @@ class MySqlTableTest extends TestCase
     {
         parent::setUp();
 
+        $fkColumn = new MySqlColumn('col3', []);
+        $fkColumn->setReference(new MySqlReference('target_table', 'target_column'));
+
         $columns = [
-            new MySqlColumn('col1', []),
-            new MySqlColumn('col2', []),
+            'col1' => new MySqlColumn('col1', []),
+            'col2' => new MySqlColumn('col2', []),
+            'col3' => $fkColumn,
         ];
 
         $indexes = [
-            new MySqlIndex('PRIMARY', ['col1']),
+            new MySqlIndex('PRIMARY', ['col1', 'col2']),
             new MySqlIndex('index1', ['col2', 'col1']),
         ];
 
@@ -50,27 +55,33 @@ class MySqlTableTest extends TestCase
             'TABLE_COMMENT' => 'Table One',
         ];
 
-        $this->target = new MySqlTable('testdb', $columns, $indexes, $options);
+        $table = new MySqlTable('testdb', $columns, $indexes, $options);
+
+        $table->setConstraints([
+            new MySqlConstraint('pk', ['col1', 'col2'], Constraint::TYPE_PRIMARY_KEY),
+        ]);
+
+        $this->target = $table;
     }
 
-    public function testGetters()
+    public function testGetPrimaryKeys()
     {
-        $this->assertEquals('InnoDB', $this->target->engine());
-        $this->assertEquals(10, $this->target->version());
-        $this->assertEquals('Dynamic', $this->target->rowFormat());
-        $this->assertEquals(8, $this->target->tableRows());
-        $this->assertEquals(2048, $this->target->avgRowLength());
-        $this->assertEquals(16384, $this->target->dataLength());
-        $this->assertEquals(0, $this->target->maxDataLength());
-        $this->assertEquals(0, $this->target->indexLength());
-        $this->assertEquals(0, $this->target->dataFree());
-        $this->assertEquals(9, $this->target->autoIncrement());
-        $this->assertEquals('2019-04-24 21:29:54', $this->target->createTime());
-        $this->assertEquals('2019-04-25 08:12:33', $this->target->updateTime());
-        $this->assertEquals(null, $this->target->checkTime());
-        $this->assertEquals('utf8mb4_unicode_ci', $this->target->tableCollation());
-        $this->assertEquals(null, $this->target->checksum());
-        $this->assertEquals('', $this->target->createOptions());
-        $this->assertEquals('Table One', $this->target->tableComment());
+        $pk = $this->target->getPrimaryKeys();
+        $this->assertEquals(2, count($pk));
+        $this->assertSame($this->target->getColumn('col1'), $pk[0]);
+        $this->assertSame($this->target->getColumn('col2'), $pk[1]);
+    }
+
+    public function testGetForeignKeys()
+    {
+        $fk = $this->target->getForeignKeys();
+        $this->assertEquals(1, count($fk));
+        $this->assertSame('target_table', $fk['col3']->getReferencedTable());
+        $this->assertSame('target_column', $fk['col3']->getReferencedColumn());
+    }
+
+    public function getComment()
+    {
+        $this->assertEquals('Table One', $this->target->getComment());
     }
 }

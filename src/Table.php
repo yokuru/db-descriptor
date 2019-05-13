@@ -77,18 +77,6 @@ abstract class Table
     }
 
     /**
-     * Get column names of primary key
-     * @return string[]
-     */
-    abstract public function getPrimaryKeys(): array;
-
-    /**
-     * Get foreign keys
-     * @return Reference[]
-     */
-    abstract public function getForeignKeys(): array;
-
-    /**
      * @return array
      */
     public function getOptions(): array
@@ -110,10 +98,29 @@ abstract class Table
     }
 
     /**
-     * @param Constraint[] $constraints
+     * @param string $key
+     * @return mixed|null
      */
-    public function setConstraints(array $constraints)
+    public function getOption(string $key)
     {
-        $this->constraints = $constraints;
+        return $this->options[$key] ?? null;
     }
+
+    /**
+     * Get columns of primary key
+     * @return Column[]
+     */
+    abstract public function getPrimaryKeys(): array;
+
+    /**
+     * Get foreign keys
+     * @return Reference[]
+     */
+    abstract public function getForeignKeys(): array;
+
+    /**
+     * Get table comment
+     * @return string
+     */
+    abstract public function getComment(): string;
 }
