@@ -27,6 +27,14 @@ class MySqlColumnTest extends TestCase
         $this->assertFalse($column->isAutoIncrement());
         $this->assertFalse($column->isUnsigned());
         $this->assertFalse($column->isNotNull());
+
+        $column = new MySqlColumn('col3', [
+            'DATA_TYPE' => 'enum',
+            'COLUMN_TYPE' => "enum('A','B','C')",
+        ]);
+        $enum = $column->getEnumValues();
+        $this->assertEquals(3, count($enum));
+        $this->assertSame(['A', 'B', 'C'], $enum);
     }
 
     public function testGetters()

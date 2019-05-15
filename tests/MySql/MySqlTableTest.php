@@ -13,10 +13,8 @@ class MySqlTableTest extends TestCase
      */
     private $target;
 
-    protected function setUp()
+    private function setupDefaultTable()
     {
-        parent::setUp();
-
         $fkColumn = new MySqlColumn('col3', []);
         $fkColumn->setReference(new MySqlReference('target_table', 'target_column'));
 
@@ -66,14 +64,24 @@ class MySqlTableTest extends TestCase
 
     public function testGetPrimaryKeys()
     {
+        $this->setupDefaultTable();
+
         $pk = $this->target->getPrimaryKeys();
         $this->assertEquals(2, count($pk));
         $this->assertSame($this->target->getColumn('col1'), $pk[0]);
         $this->assertSame($this->target->getColumn('col2'), $pk[1]);
     }
 
+    public function testGetPrimaryKeysDefault()
+    {
+        $this->target = new MySqlTable('testdb', [], [], []);
+        $this->assertEmpty($this->target->getPrimaryKeys());
+    }
+
     public function testGetForeignKeys()
     {
+        $this->setupDefaultTable();
+
         $fk = $this->target->getForeignKeys();
         $this->assertEquals(1, count($fk));
         $this->assertSame('target_table', $fk['col3']->getReferencedTable());
@@ -82,11 +90,15 @@ class MySqlTableTest extends TestCase
 
     public function testGetComment()
     {
+        $this->setupDefaultTable();
+
         $this->assertEquals('Table One', $this->target->getComment());
     }
 
     public function testGetters()
     {
+        $this->setupDefaultTable();
+
         $this->assertEquals('InnoDB', $this->target->engine());
         $this->assertEquals(10, $this->target->version());
         $this->assertEquals('Dynamic', $this->target->rowFormat());
