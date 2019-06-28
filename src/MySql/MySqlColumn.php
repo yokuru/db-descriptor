@@ -52,6 +52,17 @@ class MySqlColumn extends Column
     }
 
     /**
+     * @return bool
+     */
+    public function isGenerated(): bool
+    {
+        return in_array($this->extra(), [
+            'STORED GENERATED',
+            'VIRTUAL GENERATED',
+        ]);
+    }
+
+    /**
      * @param Reference $reference
      */
     public function setReference(Reference $reference)

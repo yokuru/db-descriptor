@@ -100,4 +100,9 @@ abstract class Column
      * @return bool
      */
     abstract public function isNotNull(): bool;
+
+    /**
+     * @return bool
+     */
+    abstract public function isGenerated(): bool;
 }
